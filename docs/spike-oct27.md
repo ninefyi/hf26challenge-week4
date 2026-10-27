@@ -32,3 +32,16 @@ Both are fine for an asynchronous Whisper.
 
 ## Next
 Decide the fact/flourish split, then build Memory retrieval, the Worth-a-Whisper rules and the validator.
+
+## 6. Build, Oct 27: facts by code, flourish by Gemma
+- `revenant/rules.py` decides when a Whisper is worth it; `facts.py` writes the factual line from a real Memory; `validate.py` rejects a Whisper whose memory, date or exit code do not match, or whose flourish states any fact; `ghost.py` ties them together and stays silent on any failure (including Ollama being down). 27 tests pass.
+- **Correction to the plan:** zsh history stores no exit codes, only a start time and a duration. "Failed before" can therefore only use commands run *after* the hook is installed (the hook's spool records the exit code). Old history can support "returns after months", "risky", "repeat" and "late night", but never "failed".
+- **Real Gemma through the validator** (fabricated histories, 20 whispers per model, up to 2 tries each, `spike/flourish_rate.py`):
+
+| Model | Whispers shown | Silent (invalid flourish) | Model calls | Total time |
+|---|---|---|---|---|
+| gemma3:4b | 12 of 20 | 8 | 32 | 22 s |
+| gemma3:12b | 16 of 20 | 4 | 28 | 57 s |
+
+  Every rejection was "flourish states a fact". By construction no shown Whisper could carry a wrong date, command or exit code; the cost is that the Ghost is sometimes silent.
+- **Weakness found:** the flourishes are repetitive. 4B opens most lines with "Dust motes", 12B with "Echoes linger". Next: vary the prompt with a rotating image (fog, clocks, candles) so the Ghost does not repeat itself.
