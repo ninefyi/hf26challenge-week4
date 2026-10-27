@@ -62,6 +62,7 @@ def test_memory_must_be_the_same_command():
 def test_flourish_may_not_state_facts():
     cmds = ["make test"]
     assert check_flourish("Something stirs in the dust.", cmds) == []
+    assert check_flourish("A red lantern sways; the bed creaks.", cmds) == []
     for bad in [
         "It failed again.",             # outcome and history
         "You were here three days ago.",  # time
@@ -71,6 +72,8 @@ def test_flourish_may_not_state_facts():
         "",
         "One. Two. Three.",
         "x" * 120,
+        "The disk filled up.",        # past tense reads as a claim about what happened
+        "Everything was restored.",
     ]:
         assert check_flourish(bad, cmds), bad
 
@@ -87,7 +90,7 @@ def test_pipeline_stays_silent_on_bad_flourish_after_retries():
         calls.append(1)
         return "It failed three days ago."
     r = make_whisper(CUR, [PAST], now=NOW, flourish_fn=liar, tz=UTC)
-    assert r.whisper is None and r.reason == "invalid" and len(calls) == 2
+    assert r.whisper is None and r.reason == "invalid" and len(calls) == 3
 
 
 def test_pipeline_retries_once_then_succeeds():

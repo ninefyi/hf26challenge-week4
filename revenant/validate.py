@@ -33,6 +33,10 @@ _BANNED = re.compile(
 )
 
 
+# Past tense reads as a claim about what happened ("filled", "restored"), so the flourish must use the present tense.
+_PAST = re.compile(r"\b(?!(?:red|bed|need|seed|speed|shed|feed|hundred|indeed)\b)\w{2,}ed\b", re.I)
+
+
 def _tokens(text: str) -> set[str]:
     return {t.lower() for t in re.findall(r"[A-Za-z0-9_]{3,}", text)}
 
@@ -47,6 +51,9 @@ def check_flourish(flourish: str, commands: Sequence[str]) -> list[str]:
         errs.append("flourish has more than two sentences")
     if re.search(r"\d|`", flourish):
         errs.append("flourish contains a digit or a backtick")
+    p = _PAST.search(flourish)
+    if p:
+        errs.append(f"flourish uses the past tense (word: {p.group(0)!r})")
     m = _BANNED.search(flourish)
     if m:
         errs.append(f"flourish states a fact (word: {m.group(0)!r})")

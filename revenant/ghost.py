@@ -18,6 +18,7 @@ SYSTEM = (
     "You are the Ghost of the user's own shell history. Write ONE short, eerie, dry sentence of atmosphere, "
     "at most 12 words, in English. State no facts: no dates, numbers, times, commands, outcomes or counts, "
     "and never say whether anything worked, failed, ran, was last or first. Never be cruel. Give no advice. "
+    "Use the present tense only, with no word ending in -ed. Do not refer to the past, memory, remembering, forgetting, or 'once'. "
     'Reply as JSON: {"flourish": "..."}'
 )
 
@@ -82,7 +83,7 @@ def make_whisper(
     flourish_fn: Flourish,
     tz: tzinfo | None = None,
     last_whisper_ts: int | None = None,
-    attempts: int = 2,
+    attempts: int = 3,
 ) -> Result:
     local_hour = datetime.fromtimestamp(now, tz).hour
     trigger = decide(current, history, now=now, last_whisper_ts=last_whisper_ts, local_hour=local_hour)
