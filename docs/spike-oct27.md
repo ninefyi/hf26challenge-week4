@@ -54,3 +54,4 @@ Decide the fact/flourish split, then build Memory retrieval, the Worth-a-Whisper
   - `ls` and `echo`: silent. After `revenant off`: silent, nothing logged.
 - The prompt now rotates an image (fog, candle, stopped clock...) and avoids the last five lines, to stop the "Dust motes" repetition. Not yet measured over many runs.
 - 36 unit tests pass.
+- **Variety check** (`spike/variety.py`, 12B, 20 runs, avoiding the last lines): 17 shown, 3 silent, 17 distinct lines. "Dust motes" still opened 3 of 17, so the repetition is reduced, not gone. Still some lines are vague rather than eerie; the post should say so.
