@@ -84,9 +84,10 @@ def make_whisper(
     tz: tzinfo | None = None,
     last_whisper_ts: int | None = None,
     attempts: int = 3,
+    cooldown: int = 180,
 ) -> Result:
     local_hour = datetime.fromtimestamp(now, tz).hour
-    trigger = decide(current, history, now=now, last_whisper_ts=last_whisper_ts, local_hour=local_hour)
+    trigger = decide(current, history, now=now, last_whisper_ts=last_whisper_ts, cooldown=cooldown, local_hour=local_hour)
     if trigger is None:
         return Result(None, "not worth")
     fact = fact_line(trigger, current.command, now, tz)

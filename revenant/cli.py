@@ -35,7 +35,7 @@ def _whisper(args, st: State, flourish_fn: Flourish | None, stdin) -> int:
         current = Entry(-1, args.start, args.dur, command, args.rc)
         result = make_whisper(
             current, history, now=now, flourish_fn=flourish_fn or _flourish(st.recent()),
-            last_whisper_ts=st.last_whisper(),
+            last_whisper_ts=st.last_whisper(), cooldown=int(os.environ.get("REVENANT_COOLDOWN", 180)),
         )
         record.update(reason=result.reason, ms=int((time.time() - started) * 1000))
         if result.problems:

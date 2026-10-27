@@ -11,6 +11,10 @@ The second half is written by code from a real entry in your history (date, comm
 Gemma only writes the atmospheric first half, and a validator drops any line that states a fact.
 If anything looks wrong, or Ollama is down, the Ghost stays silent.
 
+![demo](demo/revenant-demo.gif)
+
+The demo is recorded in a throwaway shell with a **fabricated** history and stand-in `docker`/`git`/`make`/`npm` scripts (`demo/record.sh`, needs [vhs](https://github.com/charmbracelet/vhs)); none of the commands are real.
+
 Work in progress. Python 3.13+, [uv](https://docs.astral.sh/uv/), [Ollama](https://ollama.com) with `gemma3:12b` (and `gemma3:4b` as a fallback).
 
 ## Try it in a throwaway shell (touches nothing)

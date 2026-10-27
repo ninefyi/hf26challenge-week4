@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "tests: 12 passed (demo stand-in)"

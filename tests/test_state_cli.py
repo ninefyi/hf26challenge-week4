@@ -97,3 +97,13 @@ def test_stats_summarises_the_log(tmp_path):
         st.log(r)
     text = st.stats()
     assert "commands seen: 3" in text and "whispers shown: 1" in text and "risky 1" in text
+
+
+def test_cooldown_can_be_shortened_by_env(tmp_path, capsys, monkeypatch):
+    hist = history_file(tmp_path, [(NOW - 90 * DAY, "docker compose up")])
+    fn = lambda k, f, c: "Fog gathers at the door."
+    monkeypatch.setenv("REVENANT_COOLDOWN", "1")
+    run(whisper_args(hist), tmp_path, fn)
+    capsys.readouterr()
+    run(["whisper", "--start", str(NOW + 5), "--end", str(NOW + 10), "--history", hist], tmp_path, fn)
+    assert capsys.readouterr().out.startswith("👻")

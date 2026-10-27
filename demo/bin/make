@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "make: *** [test] Error 2  (demo stand-in)"
+exit 2

@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "[+] Running 3/3  ✔ web  ✔ db  ✔ cache  (demo stand-in)"
