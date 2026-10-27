@@ -51,11 +51,15 @@ def load_spool(path: str | Path) -> list[Entry]:
     return out
 
 
+def _n(command: str) -> str:
+    return " ".join(command.split())
+
+
 def merge(history: list[Entry], spool: list[Entry], window: int = 120) -> list[Entry]:
     """History plus spool, oldest first. zsh also logs commands the hook saw, so a history
     entry with the same command within `window` seconds of a spool entry is dropped
     (the spool one knows the exit code)."""
     def dup(h: Entry) -> bool:
-        return any(s.command == h.command and abs(s.ts - h.ts) <= window for s in spool)
+        return any(_n(s.command) == _n(h.command) and abs(s.ts - h.ts) <= window for s in spool)
 
     return sorted([h for h in history if not dup(h)] + spool, key=lambda e: (e.ts, e.id))

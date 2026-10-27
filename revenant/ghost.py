@@ -1,5 +1,6 @@
 """One Whisper, end to end: decide, state the facts, ask the model for a flourish, validate."""
 import json
+import random
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, tzinfo
@@ -20,10 +21,27 @@ SYSTEM = (
     'Reply as JSON: {"flourish": "..."}'
 )
 
+# A different image each time keeps the Ghost from saying "dust motes" forever.
+IMAGES = (
+    "fog", "a candle flame", "a stopped clock", "a moth at a window", "cobwebs", "a cellar door", "a lantern",
+    "the tide", "a staircase", "a cracked mirror", "a crow", "static on a radio", "rain on glass", "an empty chair",
+    "a music box", "an attic", "a distant bell", "frost", "a draught under the door", "old wallpaper",
+)
 
-def ollama_flourish(model: str = "gemma3:12b", url: str = "http://localhost:11434", timeout: float = 30) -> Flourish:
+
+def ollama_flourish(
+    model: str = "gemma3:12b",
+    url: str = "http://localhost:11434",
+    timeout: float = 25,
+    recent: Sequence[str] = (),
+    rng: random.Random | None = None,
+) -> Flourish:
+    rng = rng or random.Random()
+
     def ask(kind: str, fact: str, current: str) -> str:
-        prompt = f"Mood hint (do not repeat it): {kind}. Write only the atmospheric sentence."
+        prompt = f"Image to draw on: {rng.choice(IMAGES)}. Write only the atmospheric sentence."
+        if recent:
+            prompt += " Do not reuse the wording or the first word of these earlier lines: " + " | ".join(recent[-5:])
         body = json.dumps({
             "model": model, "system": SYSTEM, "prompt": prompt, "stream": False, "format": "json",
             "options": {"temperature": 0.9, "num_predict": 60}, "keep_alive": "10m",
@@ -33,6 +51,20 @@ def ollama_flourish(model: str = "gemma3:12b", url: str = "http://localhost:1143
         return str(json.loads(reply).get("flourish", "")).strip()
 
     return ask
+
+
+def with_fallback(*fns: Flourish) -> Flourish:
+    """Try each model in turn (12B first, then 4B). Raise only if every one fails."""
+    def call(kind: str, fact: str, current: str) -> str:
+        last: Exception | None = None
+        for fn in fns:
+            try:
+                return fn(kind, fact, current)
+            except Exception as exc:
+                last = exc
+        raise last or RuntimeError("no model configured")
+
+    return call
 
 
 @dataclass(frozen=True)

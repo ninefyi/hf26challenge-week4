@@ -106,3 +106,19 @@ def test_pipeline_stays_silent_when_the_model_is_down():
 def test_pipeline_stays_silent_when_nothing_is_worth_saying():
     r = make_whisper(Entry(9, NOW, 0, "ls", None), [Entry(1, NOW - DAY, 0, "ls", None)], now=NOW, flourish_fn=lambda *a: "x", tz=UTC)
     assert r.whisper is None and r.reason == "not worth"
+
+
+def test_fallback_uses_the_next_model_only_when_the_first_fails():
+    from revenant.ghost import with_fallback
+
+    def down(k, f, c):
+        raise TimeoutError("12b too slow")
+
+    assert with_fallback(down, lambda k, f, c: "from 4b")("x", "y", "z") == "from 4b"
+    assert with_fallback(lambda k, f, c: "from 12b", lambda k, f, c: "from 4b")("x", "y", "z") == "from 12b"
+    try:
+        with_fallback(down, down)("x", "y", "z")
+    except TimeoutError:
+        pass
+    else:
+        raise AssertionError("expected the last error")

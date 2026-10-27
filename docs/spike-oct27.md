@@ -45,3 +45,12 @@ Decide the fact/flourish split, then build Memory retrieval, the Worth-a-Whisper
 
   Every rejection was "flourish states a fact". By construction no shown Whisper could carry a wrong date, command or exit code; the cost is that the Ghost is sometimes silent.
 - **Weakness found:** the flourishes are repetitive. 4B opens most lines with "Dust motes", 12B with "Echoes linger". Next: vary the prompt with a rotating image (fog, clocks, candles) so the Ghost does not repeat itself.
+
+## 7. Wiring and end-to-end test (Oct 27)
+- `shell/revenant.zsh` (the hook) writes each command to a private spool, then starts `python -m revenant whisper` in the background and prints its single line above the prompt via `zle -F`. `revenant off|on|mute|status|stats` control it. The model chain is 12B first, 4B if 12B fails.
+- Sandboxed pty test (`spike/e2e_pty.py`, real Gemma 4B, harmless shell functions in place of docker/git/make, fabricated history):
+  - `docker compose up` after 90 quiet days: whisper arrived 6 s after the command (cold model), prompt was not blocked.
+  - `make test` twice (exit code 2): the second run whispered "it exited with code 2", using the exit code recorded by the hook.
+  - `ls` and `echo`: silent. After `revenant off`: silent, nothing logged.
+- The prompt now rotates an image (fog, candle, stopped clock...) and avoids the last five lines, to stop the "Dust motes" repetition. Not yet measured over many runs.
+- 36 unit tests pass.

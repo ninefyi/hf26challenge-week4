@@ -23,7 +23,7 @@ def run(steps, env_extra=None, total=8.0):
     return out
 
 if __name__ == "__main__":
-    hook = os.path.abspath("sandbox/hook.zsh")
+    hook = os.path.abspath("shell/revenant.zsh")
     spool = "/tmp/revenant-spool-spike"
     open(spool, "w").close()
     steps = [(0.5, f"source {hook}\n"), (0.5, "false\n"), (0.5, "echo hi\n"), (0.3, "sleep 1\n")]
