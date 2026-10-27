@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.DS_Store
+.pytest_cache/
+# real History and anything derived from it must never be committed
+eval-real/
+state/
+spike/out/
+sandbox/home/

@@ -1,0 +1,13 @@
+[project]
+name = "revenant"
+version = "0.1.0"
+description = "A haunted terminal: a local Gemma whispers about your own shell history"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
